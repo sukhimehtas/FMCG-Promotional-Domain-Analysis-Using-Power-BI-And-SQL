@@ -73,4 +73,17 @@ productSale
 select product_name, category, IR percentage,
 rank() over(order by IR percentage desc) as IR rank
 from ProductIR
-linit 51
+limit 51
+
+
+
+
+
+
+
+
+
+
+
+
+
