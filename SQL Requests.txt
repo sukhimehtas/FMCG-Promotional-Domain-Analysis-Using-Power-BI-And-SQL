@@ -1,0 +1,76 @@
+SQL Requests :- 
+
+Q. To Display list of products with base price is greater than 500 and that are featured promo type is 'BOGOF' (by one get one free)
+
+SELECT city, COUNT(*) AS store_count FROM dim_stores GROUP BY city
+
+ORDER BY store_count DESC;
+
+
+
+
+
+Q. To display city and no of store in each city and result will be sorted in descending order of store count
+
+select product_name from dim_products 
+as dp join fact_events as fe on dp.product_code=fe.product_code 
+where promo_type="BOGOF";
+
+
+
+
+Q. To display query each campaign along with total revenue generated before promotion and after promotion
+
+select dc.campaign_name,
+sum(fe.base price fe.quantity_sold_before_promo) 
+as total_revenue_before_p 
+sum(fe.base price fe.quantity_sold_after_promo) 
+as total_revenue_after_prow from dim_campaigns dc join fact_events fe 
+on dc.campaign_id = fe.campaign_id;
+
+
+
+
+Q. To Calculate ISU% for each category during diwali campaign, provide ranking for categories based on their ISU% display category, isu%, and their rank order
+
+
+with campaignSale as ( select fe.product_code as product_code, dp.category as category, sum(fe.quantity_sold_before_promo) as total_sold_before, sum(fe.quantity_sold_after_promo) as total_sold_after 
+from fact_events fe join dim_campaigns dc 
+on fe.campaign_id dc.campaign_id join dim_products dp fe.product.code 
+on dp.product_code fe.product code 
+where dc.campaign_name = Diwal 
+group by fe.product_code, dp.category
+Category ISU as (
+SELECT product_code, category,
+(CASE
+WHEN total_sold_before THEN Avoid division by zero ELSE ((total_sold_after total_sold_before) / total_sold_before) 100.0
+END) AS ISU_percentage
+FROM campaignSale
+)
+select category, ISU_percentage,
+RANK() over(order by ISU percentage desc) as rank_order
+From CategoryISU;
+
+
+
+
+
+Q. To Calculate top 5 product ranked by incremental revenue% across all campaign display product name, category and IR%
+
+with productsale as( select fe.product_code as product_code, dp.product_name as product_name, dp.category as category, sum(fe.base price quantity_sold_before_promo) as revenue_before, sum(fe.base_price quantity_sold_after_promo) as revenue_after from dim_campaigns de join fact_events fe
+on dc.campaign_id fe.campaign_id join dim_products do on dp.product_code fe.product_code
+group by fe.product_code, dp.product_name, dp.category
+);
+ProductIR as (
+select product_code, product name, category,
+(CASE
+WHEN revenue before THEN 100.0 Avold division by zero
+ELSE ((revenue after revenue_before) / revenue before) 100.0
+END) AS IR percentage
+FROM
+productSale
+)
+select product_name, category, IR percentage,
+rank() over(order by IR percentage desc) as IR rank
+from ProductIR
+linit 51
